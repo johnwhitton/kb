@@ -5,7 +5,7 @@
 - [Deep Dive On Near Bridge](#deep-dive-on-near-bridge)
   - [John](#john)
   - [Consensus](#consensus)
-    - [Proof Of Work](#proof-of-work)
+    - [Ethereum 1.0 Proof Of Work](#ethereum-10-proof-of-work)
       - [Further Information](#further-information)
       - [Reference Implementations](#reference-implementations)
     - [Harmony Fast Byzantine Fault Tolerance (FBFT)](#harmony-fast-byzantine-fault-tolerance-fbft)
@@ -64,7 +64,7 @@
 
 ## Consensus
 
-### Proof Of Work
+### Ethereum 1.0 Proof Of Work
 
 > Existing Blockchain technology is working on the core concept of 'Proof Of Work' (POW). A proof-of-work (PoW) is a protocol that is difficult to compute but easy to verify. It can be verified in far less time than it took to compute in first place. The process involves scanning for a value that when hashed, (such as with SHA-256), the hash begins with a number of zero bits. The average work required is exponential in the number of zero bits required and can be verified by executing a single hash. In simple words, Proof of work is an expensive computation done by all miners to compete to find a number that, when added to the block of transactions, causes this block to hash to a code with certain rare properties. Finding such a rare number is hard (based on the cryptographic features of the hash function used in this process), but verifying its validity when it's found is relatively easy. One can take the challenge, the proof string and hash them together and check if the hash begins with a number of zero bits. This requires to apply the hash function just once and verify the output indeed has requisite numbers of 0's in front. If so, then the proof of work is considered valid under the application of that cryptographic hash function. Every block in the participating network should contain such rare number.
 
