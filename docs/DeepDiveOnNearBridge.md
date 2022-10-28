@@ -790,7 +790,7 @@ Newer
       * [Threat Vector Review](#appendix-b-threat-mitigation)
     * IsoMorph Zero Knowledge Improvements
         * [Bridging the Multichain Universe with Zero Knowledge Proofs](https://medium.com/@ingonyama/bridging-the-multichain-universe-with-zero-knowledge-proofs-6157464fbc86)
-        * [Harmony's Cross Chain Future](Harmony’s Cross-Chain Future)
+        * [Harmony's Cross Chain Future](https://medium.com/harmony-one/harmonys-cross-chain-future-41d02d53b10))
         * [zkBridge: Trustless Cross-chain Bridges Made Practical](https://rdi.berkeley.edu/zkp/zkBridge/uploads/paper.pdf)
         * [Succint: Towards the endgame of blockchain interoperability with proof of consensus](https://blog.succinct.xyz/post/2022/09/20/proof-of-consensus)
 * IsoMorph Harmony ETH 2.0
@@ -927,7 +927,7 @@ According to Nomad’s post-mortem, an implementation bug in a June 21 smart con
 - [HyperPlonk: Plonk with Linear-Time Prover and High-Degree Custom Gates](https://eprint.iacr.org/2022/1355.pdf)
 - [PLONK-style SNARKs without FFTs](https://notes.ethereum.org/DLRqK9V7RIOsTZkab8Hm_Q?view)
 - [Bridging the Multichain Universe with Zero Knowledge Proofs](https://medium.com/@ingonyama/bridging-the-multichain-universe-with-zero-knowledge-proofs-6157464fbc86)
-- [Harmony's Cross Chain Future](Harmony’s Cross-Chain Future)
+- [Harmony's Cross Chain Future](https://medium.com/harmony-one/harmonys-cross-chain-future-41d02d53b10))
 - [zkBridge: Trustless Cross-chain Bridges Made Practical](https://rdi.berkeley.edu/zkp/zkBridge/uploads/paper.pdf)
 - [Succint: Towards the endgame of blockchain interoperability with proof of consensus](https://blog.succinct.xyz/post/2022/09/20/proof-of-consensus)
 - 
