@@ -958,7 +958,8 @@ According to Nomad’s post-mortem, an implementation bug in a June 21 smart con
 # Reference images
 
 ![](./assets/paper/CryptoMarketCap_20221004.png "")
-![](./assets/paper/TVL_20221004.png"")
+![](./assets/paper/TVL_20221004.png "")
+![](./assets/paper/TVL-TOP-20.png "")
 ![](./assets/paper/BridgeLandscape.jpeg "")
 ![](./assets/paper/NomadVerificationMechanismComparison.png "")
 ![](./assets/paper/MapProtocolArchitecture.png "")
