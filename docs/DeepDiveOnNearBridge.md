@@ -1,6 +1,6 @@
 # Deep Dive On Near Bridge
 
-**Table of Contents2**
+**Table of Contents**
 
 - [Deep Dive On Near Bridge](#deep-dive-on-near-bridge)
   - [John](#john)
