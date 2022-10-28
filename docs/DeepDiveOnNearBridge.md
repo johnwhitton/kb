@@ -21,6 +21,7 @@
       - [Key Light Client Components Include](#key-light-client-components-include)
       - [Sample Implementation](#sample-implementation)
       - [Further Information](#further-information-2)
+    - [Ethereum 1.0 Light Client (on Harmony)](#ethereum-10-light-client-on-harmony)
     - [Ethereum 2.0](#ethereum-20)
       - [Key Concepts](#key-concepts)
       - [Altair Light Client -- Sync Protocol](#altair-light-client----sync-protocol)
@@ -429,7 +430,36 @@ Harmony [MMR PR Review](https://github.com/harmony-one/harmony/pull/3872) and [l
 ![Horizon Smart Contracts](./assets/horizon-inheritance-graph.png "Horizon Smart Contracts")
 * [Merkle Mountain Ranges (MMR), Grin Documentation, 2022](https://docs.grin.mw/wiki/chain-state/merkle-mountain-range/)
 
+### Ethereum 1.0 Light Client (on Harmony)
 
+**Design**
+Existing Design
+1. DAG is generated for each Ethereum EPOCH: This takes a couple of hours and has a size of approx 1GB.
+2. Relayer is run to replicate each block header to the SPV Client on Harmony.
+3. EthereumLightClient.sol addBlockHeader: Adds each block header to the Ethereum Light Client.
+4. Transactions are Verified
+
+**Running the Relayer**
+```
+# Start the relayer (note: replace the etherum light client address below)
+# relay [options] <ethUrl> <hmyUrl> <elcAddress>   relay eth block header to elc on hmy
+ yarn cli ethRelay relay http://localhost:8645 http://localhost:9500 0x3Ceb74A902dc5fc11cF6337F68d04cB834AE6A22
+ ```
+
+**Implementation**
+1. DAG Generation can be done explicity by calling `dagProve` from the CLI or it is done automatically by `getHeaderProof` in `ethHashProof/BlockProof.js` which is called from `blockRelay` in `cli/ethRelay.js`.
+2. Relaying of Block Headers is done by `blockRelayLoop` in `cli/ethRelay.js` which
+    * Reads the last block header from EthereumLightClient.sol
+    * Loops through calling an Ethereum RPC per block to retrieve the blockHeader using ` return eth.getBlock(blockNo).then(fromRPC)` in function `getBlockByNumber` in `eth2hmy-relay/getBlockHeader.js`
+3. Adding BlockHeaders is done by `await elc.addBlockHeader(rlpHeader, proofs.dagData, proofs.proofs)` which is called from `cli/ethRelay.js`. `addBlockHeader` in `EthereumLightClient.sol` 
+    * calculates the blockHeader Hash 
+    * and checks that it 
+        * hasn't already been relayed,
+        * is the next block to be added,
+        * has a valid timestamp 
+        * has a valid difficulty  
+        * has a valid Proof of Work (POW)
+    * Check if the canonical chain needs to be replaced by another fork
 ### Ethereum 2.0
 
 #### Key Concepts
