@@ -14,12 +14,8 @@
       - [Key Points](#key-points)
     - [NEAR Protocol Consensus](#near-protocol-consensus)
     - [Further Information](#further-information-1)
-    - [Reference Implementatiosn](#reference-implementatiosn)
+    - [Reference Implementations](#reference-implementations-1)
   - [Light Client Support](#light-client-support)
-    - [Harmony](#harmony)
-      - [Key Light Client Components Include](#key-light-client-components-include)
-      - [Sample Implementation](#sample-implementation)
-      - [Further Information](#further-information-2)
     - [Ethereum 1.0 Light Client (on Harmony)](#ethereum-10-light-client-on-harmony)
       - [Key Points](#key-points-1)
     - [Ethereum 2.0](#ethereum-20)
@@ -27,6 +23,11 @@
       - [Altair Light Client -- Sync Protocol](#altair-light-client----sync-protocol)
       - [The Portal Network](#the-portal-network)
       - [Transaction Proofs](#transaction-proofs)
+      - [Further Information](#further-information-2)
+    - [Harmony](#harmony)
+      - [Key Core Protocol Changes Include](#key-core-protocol-changes-include)
+      - [Key Light Client Components Include](#key-light-client-components-include)
+      - [Sample Implementation](#sample-implementation)
       - [Further Information](#further-information-3)
     - [NEAR](#near)
   - [Relayers](#relayers)
@@ -310,7 +311,7 @@ Please see [Consensus, NEAR Nomicon](https://nomicon.io/ChainSpec/Consensus)
 
 
 
-### Reference Implementatiosn
+### Reference Implementations
 * [consensus, Harmony](https://github.com/harmony-one/harmony/tree/main/consensus)
 * [Mountain Merkle Range Support, Harmony](https://github.com/harmony-one/harmony/pull/4198)
 * [Ethereum 2.0, Prysm](https://github.com/prysmaticlabs/prysm)
@@ -330,124 +331,6 @@ https://github.com/near/nearcore
 
 
 ## Light Client Support
-
-### Harmony
-Harmony [MMR PR Review](https://github.com/harmony-one/harmony/pull/3872) and [latest PR](https://github.com/harmony-one/harmony/pull/4198/files) uses Merkle Mountain Ranges to facilitate light client development against Harmony's sharded Proof of Stake Chain.
-
-Block Structure from [harmony](https://github.com/peekpi/harmony/blob/mmrHardfork/block/v4/header.go) with [Merkle Mountain Range](https://docs.grin.mw/wiki/chain-state/merkle-mountain-range/) support [Mmr hardfork](https://github.com/harmony-one/harmony/pull/3872) [PR 4198](https://github.com/harmony-one/harmony/pull/4198) introduces `MMRoot`
-
-GOAL: Allow verificatin that previous blocks were valid based on the MMRRoot Passed.
-
-Features
-* add receipt proof
-* adding MMRRoot field to block header & cross-chain epoch
-* add memdb and filedb mmr processing logic
-* add GetProof rpc
-* relayer rpcs for fetching full header
-* adding block signers for rpc response, debug-only
-* minor testing bls
-* fix merge conflicts
-* github.com/zmitton/go-merklemountainrange dependency
-* minor fix
-* moving mmr root compute/update logic to after the shard state is computed
-* fix getting siblings bug
-* adding index to mmr-proof and GetProof with respect to a block number
-* check if mmr directory exists, if not create it first
-* fixing failing test
-* fixing config build test failure
-* fixing more test failures
-* cleanup
-* turn of signers
-* fix header copy issue and write mmr root directly to node.worker header
-* fix nil pointer problems, shard state fetch issue, and refIndex bug
-* clean up
-```
-type headerFields struct {
-	ParentHash          common.Hash    `json:"parentHash"       gencodec:"required"`
-	Coinbase            common.Address `json:"miner"            gencodec:"required"`
-	Root                common.Hash    `json:"stateRoot"        gencodec:"required"`
-	TxHash              common.Hash    `json:"transactionsRoot" gencodec:"required"`
-	ReceiptHash         common.Hash    `json:"receiptsRoot"     gencodec:"required"`
-	OutgoingReceiptHash common.Hash    `json:"outgoingReceiptsRoot"     gencodec:"required"`
-	IncomingReceiptHash common.Hash    `json:"incomingReceiptsRoot" gencodec:"required"`
-	Bloom               ethtypes.Bloom `json:"logsBloom"        gencodec:"required"`
-	Number              *big.Int       `json:"number"           gencodec:"required"`
-	GasLimit            uint64         `json:"gasLimit"         gencodec:"required"`
-	GasUsed             uint64         `json:"gasUsed"          gencodec:"required"`
-	Time                *big.Int       `json:"timestamp"        gencodec:"required"`
-	Extra               []byte         `json:"extraData"        gencodec:"required"`
-	MixDigest           common.Hash    `json:"mixHash"          gencodec:"required"`
-	// Additional Fields
-	ViewID              *big.Int    `json:"viewID"           gencodec:"required"`
-	Epoch               *big.Int    `json:"epoch"            gencodec:"required"`
-	ShardID             uint32      `json:"shardID"          gencodec:"required"`
-	LastCommitSignature [96]byte    `json:"lastCommitSignature"  gencodec:"required"`
-	LastCommitBitmap    []byte      `json:"lastCommitBitmap"     gencodec:"required"` // Contains which validator signed
-	Vrf                 []byte      `json:"vrf"`
-	Vdf                 []byte      `json:"vdf"`
-	ShardState          []byte      `json:"shardState"`
-	CrossLinks          []byte      `json:"crossLink"`
-	Slashes             []byte      `json:"slashes"`
-	MMRRoot             common.Hash `json:"mmrRoot"`
-}
-```
-
-#### Key Light Client Components Include
-* [TokenLockerOnEthereum.sol](https://github.com/johnwhitton/horizon/blob/refactorV2/contracts/TokenLockerOnEthereum.sol) which has the following imports
-    * [HarmonyLightClient.sol](https://github.com/johnwhitton/horizon/blob/refactorV2/contracts/HarmonyLightClient.sol): Used for Block Propogation
-    * [MMRVerifier.sol](https://github.com/johnwhitton/horizon/blob/refactorV2/contracts/lib/MMRVerifier.sol): verifies that the given value exists in the tree or reverts the transaction. 
-        * `function inclusionProof(bytes32 root, uint256 width, uint256 index, bytes32 value32, bytes32[] memory peaks, bytes32[] memory siblings) internal pure returns (bool)`
-    * [HarmonyProver.sol](https://github.com/johnwhitton/horizon/blob/refactorV2/contracts/HarmonyProver.sol): Is largeley based of [Ethereum State Bridge developed by pipeos-one](https://github.com/pipeos-one/goldengate/blob/master/contracts/contracts/Prover.sol) has get, to and verify functions. Verify functions include
-        * `function verifyTrieProof(MerkleProof memory data) internal pure returns (bytes memory)`
-        * `function verifyHeader(HarmonyParser.BlockHeader memory header, MMRVerifier.MMRProof memory proof) internal pure returns (bool valid, string memory reason)`
-        * `function verifyTransaction(HarmonyParser.BlockHeader memory header, MerkleProof memory txdata) internal pure returns (bytes memory serializedTx)`
-        * `function verifyReceipt(HarmonyParser.BlockHeader memory header, MerkleProof memory receiptdata)`
-        * `function verifyAccount(HarmonyParser.BlockHeader memory header, MerkleProof memory accountdata)`
-        * `function verifyLog(MerkleProof memory receiptdata, uint256 logIndex)`
-        * `function verifyTransactionAndStatus(HarmonyParser.BlockHeader memory header, MerkleProof memory receiptdata)`
-        * `function verifyCode(HarmonyParser.BlockHeader memory header,MerkleProof memory accountdata)`
-        * `function verifyStorage(MerkleProof memory accountProof, MerkleProof memory storageProof)`
-    * [TokenLocker.sol](https://github.com/johnwhitton/horizon/blob/refactorV2/contracts/TokenLocker.sol): whose main function is to execute corresponding transactions based on transactions that occured on the other side of the bridge
-        * `function execute(bytes memory rlpdata) internal returns (uint256 events)`
-
-
-#### Sample Implementation
-
-* gets the proof of the transaction on Harmony via `getProof` calling `prover.ReceiptProof` which calls the eprover and returns `proof` with 
-    * `hash: sha3(resp.header.serialize()),`
-    * `root: resp.header.receiptRoot,`
-    * `proof: encode(resp.receiptProof),`
-    * `key: encode(Number(resp.txIndex)) // '0x12' => Nunmber`
-* We then call `dest.ExecProof(proof)` to execute the proof on Ethereum
-    * This calls `validateAndExecuteProof` on `TokenLokerOnEthereum.sol` with the `proofData` from above, which
-        * `require(lightclient.isValidCheckPoint(header.epoch, mmrProof.root),` implemented by `HarmonyLightClient.sol`
-            * `return epochMmrRoots[epoch][mmrRoot]` which means that the epoch has to have had a checkpoint submitted via ` submitCheckpoint` 
-        * `bytes32 blockHash = HarmonyParser.getBlockHash(header);` gets the blockHash implemented by `HarmonyParser.sol`  
-            * This returns `return keccak256(getBlockRlpData(header));`  
-            * `getBlockRlpData`  creates a list `bytes[] memory list = new bytes[](15);` and uses statements like `list[0] = RLPEncode.encodeBytes(abi.encodePacked(header.parentHash));` to perform [Recursive-Length Prefix (RLP) Serialization](https://ethereum.org/en/developers/docs/data-structures-and-encoding/rlp/) implemented by `RLPEncode.sol`
-        *  `HarmonyProver.verifyHeader(header, mmrProof);` verifys the header implemented by `HarmonyProver.sol`
-            * `bytes32 blockHash = HarmonyParser.getBlockHash(header);` gets the blockHash implemented by `HarmonyParser.sol` as above
-            * `valid = MMRVerifier.inclusionProof(proof.root, proof.width, proof.index, blockHash, proof.peaks, proof.siblings);` verifys the proff using the [Merkle Mountain Range Proof](https://github.com/opentimestamps/opentimestamps-server/blob/master/doc/merkle-mountain-range.md) passed `MMRVerifier.MMRProof memory proof` and the `blockHash`.
-            * **NOTE: This means that a `submitCheckpoint` in `HarmonyLightClient.sol` needs to have called either for the next epoch or for a checkpoint, after the block the harmony mapping transaction was in.**
-            * **NOTE: Automatic submission of checkpoints to the Harmony Light Client has not been developed as yet. (It is not part of the `ethRelay.js`). And so the checkpoint would need to be manually submitted before the Ethereum Mapping could take place.**
-        * `require(spentReceipt[receiptHash] == false, "double spent!");` ensure that we haven't already processed this mapping request`
-        * `HarmonyProver.verifyReceipt(header, receiptdata)` ensure the receiptdata is valid
-        * `spentReceipt[receiptHash] = true;` marks the receipt as having been processed
-        * `execute(receiptdata.expectedValue);` implemented by `TokenLocker.sol` which calls `onTokenMapAckEvent(topics)` implemented by `TokenRegistry.sol` 
-            * `address tokenReq = address(uint160(uint256(topics[1])));`
-            * `address tokenAck = address(uint160(uint256(topics[2])));`
-            * `require(TxMapped[tokenReq] == address(0), "missing mapping to acknowledge");`
-            * `TxMapped[tokenReq] = tokenAck;`
-            * `TxMappedInv[tokenAck] = IERC20Upgradeable(tokenReq);`
-            * `TxTokens.push(IERC20Upgradeable(tokenReq));`
-
-#### Further Information
-
-* [DagProof.js, Harmony 2022](https://github.com/johnwhitton/horizon/blob/refactorV2/src/eth2hmy-relay/lib/DagProof.js))
-* [Horizon Smart Contracts](https://github.com/johnwhitton/horizon/blob/refactorV2/docs/inheritance-graph.png)
-![Horizon Smart Contracts](./assets/horizon-inheritance-graph.png "Horizon Smart Contracts")
-* [Merkle Mountain Ranges (MMR), Grin Documentation, 2022](https://docs.grin.mw/wiki/chain-state/merkle-mountain-range/)
-
 ### Ethereum 1.0 Light Client (on Harmony)
 
 **Design**
@@ -590,6 +473,124 @@ Existing Design
 * [Distributed Hash Table (DHT) Overview](https://github.com/ethereum/portal-network-specs/blob/master/beacon-chain/beacon-state-network.md#dht-overview): allows network participants to have retrieve data on-demand based on a content key.
 * [(WIP) Light client p2p interface Specification](https://github.com/ethereum/consensus-specs/pull/2786): a PR to get the conversation going about a p2p approach.
 Here we cover two approaches which may be combined
+
+### Harmony
+Harmony [MMR PR Review](https://github.com/harmony-one/harmony/pull/3872) and [latest PR](https://github.com/harmony-one/harmony/pull/4198/files) uses Merkle Mountain Ranges to facilitate light client development against Harmony's sharded Proof of Stake Chain.
+
+#### Key Core Protocol Changes Include
+Block Structure from [harmony](https://github.com/peekpi/harmony/blob/mmrHardfork/block/v4/header.go) with [Merkle Mountain Range](https://docs.grin.mw/wiki/chain-state/merkle-mountain-range/) support [Mmr hardfork](https://github.com/harmony-one/harmony/pull/3872) [PR 4198](https://github.com/harmony-one/harmony/pull/4198) introduces `MMRoot`
+
+GOAL: Allow verificatin that previous blocks were valid based on the MMRRoot Passed.
+
+Features
+* add receipt proof
+* adding MMRRoot field to block header & cross-chain epoch
+* add memdb and filedb mmr processing logic
+* add GetProof rpc
+* relayer rpcs for fetching full header
+* adding block signers for rpc response, debug-only
+* minor testing bls
+* fix merge conflicts
+* github.com/zmitton/go-merklemountainrange dependency
+* minor fix
+* moving mmr root compute/update logic to after the shard state is computed
+* fix getting siblings bug
+* adding index to mmr-proof and GetProof with respect to a block number
+* check if mmr directory exists, if not create it first
+* fixing failing test
+* fixing config build test failure
+* fixing more test failures
+* cleanup
+* turn of signers
+* fix header copy issue and write mmr root directly to node.worker header
+* fix nil pointer problems, shard state fetch issue, and refIndex bug
+* clean up
+```
+type headerFields struct {
+	ParentHash          common.Hash    `json:"parentHash"       gencodec:"required"`
+	Coinbase            common.Address `json:"miner"            gencodec:"required"`
+	Root                common.Hash    `json:"stateRoot"        gencodec:"required"`
+	TxHash              common.Hash    `json:"transactionsRoot" gencodec:"required"`
+	ReceiptHash         common.Hash    `json:"receiptsRoot"     gencodec:"required"`
+	OutgoingReceiptHash common.Hash    `json:"outgoingReceiptsRoot"     gencodec:"required"`
+	IncomingReceiptHash common.Hash    `json:"incomingReceiptsRoot" gencodec:"required"`
+	Bloom               ethtypes.Bloom `json:"logsBloom"        gencodec:"required"`
+	Number              *big.Int       `json:"number"           gencodec:"required"`
+	GasLimit            uint64         `json:"gasLimit"         gencodec:"required"`
+	GasUsed             uint64         `json:"gasUsed"          gencodec:"required"`
+	Time                *big.Int       `json:"timestamp"        gencodec:"required"`
+	Extra               []byte         `json:"extraData"        gencodec:"required"`
+	MixDigest           common.Hash    `json:"mixHash"          gencodec:"required"`
+	// Additional Fields
+	ViewID              *big.Int    `json:"viewID"           gencodec:"required"`
+	Epoch               *big.Int    `json:"epoch"            gencodec:"required"`
+	ShardID             uint32      `json:"shardID"          gencodec:"required"`
+	LastCommitSignature [96]byte    `json:"lastCommitSignature"  gencodec:"required"`
+	LastCommitBitmap    []byte      `json:"lastCommitBitmap"     gencodec:"required"` // Contains which validator signed
+	Vrf                 []byte      `json:"vrf"`
+	Vdf                 []byte      `json:"vdf"`
+	ShardState          []byte      `json:"shardState"`
+	CrossLinks          []byte      `json:"crossLink"`
+	Slashes             []byte      `json:"slashes"`
+	MMRRoot             common.Hash `json:"mmrRoot"`
+}
+```
+
+#### Key Light Client Components Include
+* [TokenLockerOnEthereum.sol](https://github.com/johnwhitton/horizon/blob/refactorV2/contracts/TokenLockerOnEthereum.sol) which has the following imports
+    * [HarmonyLightClient.sol](https://github.com/johnwhitton/horizon/blob/refactorV2/contracts/HarmonyLightClient.sol): Used for Block Propogation
+    * [MMRVerifier.sol](https://github.com/johnwhitton/horizon/blob/refactorV2/contracts/lib/MMRVerifier.sol): verifies that the given value exists in the tree or reverts the transaction. 
+        * `function inclusionProof(bytes32 root, uint256 width, uint256 index, bytes32 value32, bytes32[] memory peaks, bytes32[] memory siblings) internal pure returns (bool)`
+    * [HarmonyProver.sol](https://github.com/johnwhitton/horizon/blob/refactorV2/contracts/HarmonyProver.sol): Is largeley based of [Ethereum State Bridge developed by pipeos-one](https://github.com/pipeos-one/goldengate/blob/master/contracts/contracts/Prover.sol) has get, to and verify functions. Verify functions include
+        * `function verifyTrieProof(MerkleProof memory data) internal pure returns (bytes memory)`
+        * `function verifyHeader(HarmonyParser.BlockHeader memory header, MMRVerifier.MMRProof memory proof) internal pure returns (bool valid, string memory reason)`
+        * `function verifyTransaction(HarmonyParser.BlockHeader memory header, MerkleProof memory txdata) internal pure returns (bytes memory serializedTx)`
+        * `function verifyReceipt(HarmonyParser.BlockHeader memory header, MerkleProof memory receiptdata)`
+        * `function verifyAccount(HarmonyParser.BlockHeader memory header, MerkleProof memory accountdata)`
+        * `function verifyLog(MerkleProof memory receiptdata, uint256 logIndex)`
+        * `function verifyTransactionAndStatus(HarmonyParser.BlockHeader memory header, MerkleProof memory receiptdata)`
+        * `function verifyCode(HarmonyParser.BlockHeader memory header,MerkleProof memory accountdata)`
+        * `function verifyStorage(MerkleProof memory accountProof, MerkleProof memory storageProof)`
+    * [TokenLocker.sol](https://github.com/johnwhitton/horizon/blob/refactorV2/contracts/TokenLocker.sol): whose main function is to execute corresponding transactions based on transactions that occured on the other side of the bridge
+        * `function execute(bytes memory rlpdata) internal returns (uint256 events)`
+
+
+#### Sample Implementation
+
+* gets the proof of the transaction on Harmony via `getProof` calling `prover.ReceiptProof` which calls the eprover and returns `proof` with 
+    * `hash: sha3(resp.header.serialize()),`
+    * `root: resp.header.receiptRoot,`
+    * `proof: encode(resp.receiptProof),`
+    * `key: encode(Number(resp.txIndex)) // '0x12' => Nunmber`
+* We then call `dest.ExecProof(proof)` to execute the proof on Ethereum
+    * This calls `validateAndExecuteProof` on `TokenLokerOnEthereum.sol` with the `proofData` from above, which
+        * `require(lightclient.isValidCheckPoint(header.epoch, mmrProof.root),` implemented by `HarmonyLightClient.sol`
+            * `return epochMmrRoots[epoch][mmrRoot]` which means that the epoch has to have had a checkpoint submitted via ` submitCheckpoint` 
+        * `bytes32 blockHash = HarmonyParser.getBlockHash(header);` gets the blockHash implemented by `HarmonyParser.sol`  
+            * This returns `return keccak256(getBlockRlpData(header));`  
+            * `getBlockRlpData`  creates a list `bytes[] memory list = new bytes[](15);` and uses statements like `list[0] = RLPEncode.encodeBytes(abi.encodePacked(header.parentHash));` to perform [Recursive-Length Prefix (RLP) Serialization](https://ethereum.org/en/developers/docs/data-structures-and-encoding/rlp/) implemented by `RLPEncode.sol`
+        *  `HarmonyProver.verifyHeader(header, mmrProof);` verifys the header implemented by `HarmonyProver.sol`
+            * `bytes32 blockHash = HarmonyParser.getBlockHash(header);` gets the blockHash implemented by `HarmonyParser.sol` as above
+            * `valid = MMRVerifier.inclusionProof(proof.root, proof.width, proof.index, blockHash, proof.peaks, proof.siblings);` verifys the proff using the [Merkle Mountain Range Proof](https://github.com/opentimestamps/opentimestamps-server/blob/master/doc/merkle-mountain-range.md) passed `MMRVerifier.MMRProof memory proof` and the `blockHash`.
+            * **NOTE: This means that a `submitCheckpoint` in `HarmonyLightClient.sol` needs to have called either for the next epoch or for a checkpoint, after the block the harmony mapping transaction was in.**
+            * **NOTE: Automatic submission of checkpoints to the Harmony Light Client has not been developed as yet. (It is not part of the `ethRelay.js`). And so the checkpoint would need to be manually submitted before the Ethereum Mapping could take place.**
+        * `require(spentReceipt[receiptHash] == false, "double spent!");` ensure that we haven't already processed this mapping request`
+        * `HarmonyProver.verifyReceipt(header, receiptdata)` ensure the receiptdata is valid
+        * `spentReceipt[receiptHash] = true;` marks the receipt as having been processed
+        * `execute(receiptdata.expectedValue);` implemented by `TokenLocker.sol` which calls `onTokenMapAckEvent(topics)` implemented by `TokenRegistry.sol` 
+            * `address tokenReq = address(uint160(uint256(topics[1])));`
+            * `address tokenAck = address(uint160(uint256(topics[2])));`
+            * `require(TxMapped[tokenReq] == address(0), "missing mapping to acknowledge");`
+            * `TxMapped[tokenReq] = tokenAck;`
+            * `TxMappedInv[tokenAck] = IERC20Upgradeable(tokenReq);`
+            * `TxTokens.push(IERC20Upgradeable(tokenReq));`
+
+#### Further Information
+
+* [DagProof.js, Harmony 2022](https://github.com/johnwhitton/horizon/blob/refactorV2/src/eth2hmy-relay/lib/DagProof.js))
+* [Horizon Smart Contracts](https://github.com/johnwhitton/horizon/blob/refactorV2/docs/inheritance-graph.png)
+![Horizon Smart Contracts](./assets/horizon-inheritance-graph.png "Horizon Smart Contracts")
+* [Merkle Mountain Ranges (MMR), Grin Documentation, 2022](https://docs.grin.mw/wiki/chain-state/merkle-mountain-range/)
 
 ### NEAR
 
