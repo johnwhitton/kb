@@ -53,6 +53,12 @@
   - [APPENDIX D: Other Bridge Approaches](#appendix-d-other-bridge-approaches)
   - [APPENDIX E: Signing Mechanisms](#appendix-e-signing-mechanisms)
 - [References](#references)
+- [Reference Code Bases](#reference-code-bases)
+  - [Core Protocol](#core-protocol)
+  - [Bridges](#bridges)
+  - [SDK](#sdk)
+  - [Frontend](#frontend)
+- [Reference images](#reference-images)
 
 
 ## John
@@ -783,6 +789,10 @@ Newer
       * [Other Bridge Approaches](#appendix-d-other-bridge-approaches)
       * [Threat Vector Review](#appendix-b-threat-mitigation)
     * IsoMorph Zero Knowledge Improvements
+        * [Bridging the Multichain Universe with Zero Knowledge Proofs](https://medium.com/@ingonyama/bridging-the-multichain-universe-with-zero-knowledge-proofs-6157464fbc86)
+        * [Harmony's Cross Chain Future](Harmony’s Cross-Chain Future)
+        * [zkBridge: Trustless Cross-chain Bridges Made Practical](https://rdi.berkeley.edu/zkp/zkBridge/uploads/paper.pdf)
+        * [Succint: Towards the endgame of blockchain interoperability with proof of consensus](https://blog.succinct.xyz/post/2022/09/20/proof-of-consensus)
 * IsoMorph Harmony ETH 2.0
     * ETH 2.0 Support
     * Relayer Harmony to ETH
@@ -916,3 +926,47 @@ According to Nomad’s post-mortem, an implementation bug in a June 21 smart con
 - [Caulk: Lookup Arguments in Sublinear Time](https://eprint.iacr.org/2022/621.pdf)
 - [HyperPlonk: Plonk with Linear-Time Prover and High-Degree Custom Gates](https://eprint.iacr.org/2022/1355.pdf)
 - [PLONK-style SNARKs without FFTs](https://notes.ethereum.org/DLRqK9V7RIOsTZkab8Hm_Q?view)
+- [Bridging the Multichain Universe with Zero Knowledge Proofs](https://medium.com/@ingonyama/bridging-the-multichain-universe-with-zero-knowledge-proofs-6157464fbc86)
+- [Harmony's Cross Chain Future](Harmony’s Cross-Chain Future)
+- [zkBridge: Trustless Cross-chain Bridges Made Practical](https://rdi.berkeley.edu/zkp/zkBridge/uploads/paper.pdf)
+- [Succint: Towards the endgame of blockchain interoperability with proof of consensus](https://blog.succinct.xyz/post/2022/09/20/proof-of-consensus)
+- 
+
+# Reference Code Bases
+
+## Core Protocol
+* [Go Ethereum 1.0 (1.9)](https://github.com/ethereum/go-ethereum/tree/release/1.9): golang
+* [Parity Ethereum v2.7.2](https://github.com/openethereum/parity-ethereum): rust
+* [Ethereum 2.0 Beacon Prysm](https://github.com/prysmaticlabs/prysm): golang
+* [Ethereum 2.0 Beacon Sigp](https://github.com/sigp/lighthouse): rust
+* [Ethreum 2.0 Beacon aurora-is-near](https://github.com/aurora-is-near/lighthouse): rust forked from sigp
+* [Harmony](https://github.com/harmony-one/harmony): golang
+* [Harmony MMRHardFork](https://github.com/peekpi/harmony/tree/mmrHardfork)
+* [NEAR](https://github.com/near/nearcore): rust
+
+## Bridges
+* [Horizon](https://github.com/johnwhitton/horizon/tree/refactorV2): javascript, solidity
+* [Near Rainbow Bridge](https://github.com/aurora-is-near/rainbow-bridge): rust, go, solidity, javascript
+* [Near Rainbow Token Connector](https://github.com/aurora-is-near/rainbow-token-connector): soldity
+
+## SDK
+* [Near Rainbow Bridge Client](https://github.com/aurora-is-near/rainbow-bridge-client/tree/main/packages/client): typescript
+
+## Frontend
+* [NEAR Rainbow Bridge Frontend](https://github.com/aurora-is-near/rainbow-bridge-frontend)
+
+# Reference images
+
+![](./assets/paper/CryptoMarketCap_20221004.png "")
+![](./assets/paper/TVL_20221004.png"")
+![](./assets/paper/BridgeLandscape.jpeg "")
+![](./assets/paper/NomadVerificationMechanismComparison.png "")
+![](./assets/paper/MapProtocolArchitecture.png "")
+![](./assets/paper/MapProtocolFungibleTokenFlow.png "")
+![](./assets/paper/MapProtocolRefactorLightClientWithzkSNARK.png "")
+![Wormhole Architecture](./assets/paper/WormholeArchitecture.png "Wormhole Architecture")
+![](./assets/paper/NomadCrossChainMessageLifeCycle.png "")
+![](./assets/paper/eth2hmy.png "")
+![](./assets/paper/EthereumBeaconAPI.png "")
+![](./assets/paper/PlumoMainCircuit.png "")
+
