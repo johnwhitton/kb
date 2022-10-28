@@ -6,23 +6,27 @@
   - [John](#john)
   - [Consensus](#consensus)
     - [Proof Of Work](#proof-of-work)
+      - [Key Points](#key-points)
+      - [Further Information](#further-information)
+      - [Reference Implementations](#reference-implementations)
     - [Harmony Fast Byzantine Fault Tolerance (FBFT)](#harmony-fast-byzantine-fault-tolerance-fbft)
     - [Ethereum 2.0 Proof Of Stake](#ethereum-20-proof-of-stake)
       - [Ethereum 2.0 Attestations](#ethereum-20-attestations)
+      - [Key Points](#key-points-1)
     - [NEAR Protocol Consensus](#near-protocol-consensus)
-    - [Further Information**](#further-information)
+    - [Further Information](#further-information-1)
     - [Reference Implementatiosn](#reference-implementatiosn)
   - [Light Client Support](#light-client-support)
     - [Harmony](#harmony)
       - [Key Light Client Components Include](#key-light-client-components-include)
       - [Sample Implementation](#sample-implementation)
-      - [Further Information**](#further-information-1)
+      - [Further Information](#further-information-2)
     - [Ethereum 2.0](#ethereum-20)
       - [Key Concepts](#key-concepts)
       - [Altair Light Client -- Sync Protocol](#altair-light-client----sync-protocol)
       - [The Portal Network](#the-portal-network)
       - [Transaction Proofs](#transaction-proofs)
-      - [Further Information](#further-information-2)
+      - [Further Information](#further-information-3)
     - [NEAR](#near)
   - [Relayers](#relayers)
     - [NEAR TO Ethereum](#near-to-ethereum)
@@ -30,7 +34,7 @@
       - [Bonding and Slashing](#bonding-and-slashing)
       - [NEAR to Ethereum block propagation flow](#near-to-ethereum-block-propagation-flow)
       - [NearBridge.sol](#nearbridgesol)
-      - [Further Information](#further-information-3)
+      - [Further Information](#further-information-4)
     - [Ethereum to NEAR](#ethereum-to-near)
       - [Light Client Every Block Header (Ethereum to NEAR)](#light-client-every-block-header-ethereum-to-near)
     - [Harmony to Ethereum](#harmony-to-ethereum)
@@ -92,7 +96,7 @@ func (ethash *Ethash) SealHash(header *types.Header) (hash common.Hash) {
 }
 ```
 
-**Key Points**
+#### Key Points
 * Uses EthHash Function which has been implemented in go, rust and solidity.
 * DAG Generation for an Epoch is done up front (see [DagProof.js](https://github.com/johnwhitton/horizon/blob/refactorV2/src/eth2hmy-relay/lib/DagProof.js)) takes a couple of hours (code can be optimized) generates a merkle tree uses about 2GB.
 * Forks are possible so finality takes longer
@@ -102,12 +106,12 @@ func (ethash *Ethash) SealHash(header *types.Header) (hash common.Hash) {
        * `return canonicalBlocks[blockHash] && blocks[blockHash].number + 200 < blocks[canonicalHead].number;`
 
 
-**Further Information**
+#### Further Information
 * [Proof of Work (POW), Ethereum Org, 2022](https://ethereum.org/en/developers/docs/consensus-mechanisms/pow/)
 * [Proof Of Work (POW), EtherWorld 2017](https://etherworld.co/2017/04/16/proof-of-work-pow/)
 * [EIP-1057: ProgPoW, a Programmatic Proof-of-Work](https://eips.ethereum.org/EIPS/eip-1057)
 
-**Reference Implementations**
+#### Reference Implementations
 * [consensus go-ethereum Nov 202](https://github.com/ethereum/go-ethereum/blob/release/1.9/consensus/consensus.go)
 * [ethash.go, go-ethereum Nov 2020](https://github.com/ethereum/go-ethereum/blob/release/1.9/consensus/ethash/ethash.go)
 * [ethash.sol, horizon 2022](https://github.com/johnwhitton/horizon/blob/refactorV2/contracts/ethash/ethash.sol)
@@ -328,7 +332,7 @@ From [Attestations, ethereum.org](https://ethereum.org/en/developers/docs/consen
 ![Ethreum 2.0 Attestations](./assets/ethereum-attestation-schematic.png "Ethreum 2.0 Attestations")
 
 
-**Key Points**
+#### Key Points
 * Use of BLS Signatures
 * Validators typically change per epoch
 
@@ -336,7 +340,7 @@ From [Attestations, ethereum.org](https://ethereum.org/en/developers/docs/consen
 
 Please see [Consensus, NEAR Nomicon](https://nomicon.io/ChainSpec/Consensus)
 
-### Further Information**
+### Further Information
 * [Proof of Stake (POS), Ethereum Org, 2022](https://ethereum.org/en/developers/docs/consensus-mechanisms/pos/)
 * [Proof of Stake, Vitalik, 2017](https://vitalik.ca/general/2017/12/31/pos_faq.html)
 * [Combining GHOST and Casper](https://arxiv.org/pdf/2003.03052.pdf)
@@ -418,7 +422,7 @@ Harmony [MMR PR Review](https://github.com/harmony-one/harmony/pull/3872) and [l
             * `TxMappedInv[tokenAck] = IERC20Upgradeable(tokenReq);`
             * `TxTokens.push(IERC20Upgradeable(tokenReq));`
 
-#### Further Information**
+#### Further Information
 
 * [DagProof.js, Harmony 2022](https://github.com/johnwhitton/horizon/blob/refactorV2/src/eth2hmy-relay/lib/DagProof.js))
 * [Horizon Smart Contracts](https://github.com/johnwhitton/horizon/blob/refactorV2/docs/inheritance-graph.png)
@@ -791,16 +795,11 @@ According to Nomad’s post-mortem, an implementation bug in a June 21 smart con
 
 
 ## APPENDIX D: [Other Bridge Approaches](https://github.com/johnwhitton/horizon/blob/refactorV2/docs/MultiChainTrustlessBridgeDraft.pdf)
-    * [NEAR Rainbow Bridge]
-    * [Wormhole]
-    * [Map Protocol]
-    * [Nomad]
-    * Cross Chain Messaging
-        * [Cosmos IBC]
-        * [Polkadot XCMP]
-* [Bridge Hacks]
-* [Ethereum 2.0 Support]
-* [NEAR Deep Dive]
+    * [NEAR Rainbow Bridge](https://near.org/blog/eth-near-rainbow-bridge/)
+    * [Wormhole](https://docs.wormhole.com/wormhole/)
+    * [Map Protocol](https://files.maplabs.io/pdf/mapprotocol_Litebook_en.pdf)
+    * [Nomad](https://docs.nomad.xyz/the-nomad-protocol/overview)
+
 
 ## APPENDIX E: Signing Mechanisms
 
