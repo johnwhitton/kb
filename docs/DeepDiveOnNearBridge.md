@@ -891,6 +891,7 @@ According to Nomad’s post-mortem, an implementation bug in a June 21 smart con
 
 
 ## APPENDIX D: [Other Bridge Approaches](https://github.com/johnwhitton/horizon/blob/refactorV2/docs/MultiChainTrustlessBridgeDraft.pdf)
+
     * [NEAR Rainbow Bridge](https://near.org/blog/eth-near-rainbow-bridge/)
     * [Wormhole](https://docs.wormhole.com/wormhole/)
     * [Map Protocol](https://files.maplabs.io/pdf/mapprotocol_Litebook_en.pdf)
