@@ -36,6 +36,7 @@
       - [Bonding and Slashing](#bonding-and-slashing)
       - [NEAR to Ethereum block propagation flow](#near-to-ethereum-block-propagation-flow)
       - [NearBridge.sol](#nearbridgesol)
+      - [Key Points](#key-points-2)
       - [Further Information](#further-information-4)
     - [Ethereum to NEAR](#ethereum-to-near)
       - [Light Client Every Block Header (Ethereum to NEAR)](#light-client-every-block-header-ethereum-to-near)
@@ -608,17 +609,19 @@ type headerFields struct {
 ### NEAR TO Ethereum
 
 #### NEAR to Ethereum block propagation costing
-The following links provide the production Ethereum addresses and blockexplorer views for NearBridge.sol and the ERC20 Locker
-* [Ethereum Mainnet Bridge addresses and parameters](https://github.com/aurora-is-near/rainbow-bridge-client/tree/main/packages/client#ethereum-mainnet-bridge-addresses-and-parameters)
-* [NearBridge.sol on Ethereum Block Explorer](https://etherscan.io/address/0x3fefc5a4b1c02f21cbc8d3613643ba0635b9a873)
-    * [Sample `addLightClientBlock(bytes data)` function call](https://etherscan.io/tx/0xa0fbf1405747dbc1c1bda1227e46bc7c5feac36c0eeaab051022cfdb268e60cc/advanced)
-* [NEAR ERC20Locker on Ethereum Block Explorer](https://etherscan.io/address/0x23ddd3e3692d1861ed57ede224608875809e127f#code)
 
 At time of writing (Oct 26th, 2022). 
 * NEAR Light Client Blocks are propogated every `4 hours`
 * Sample Transaction fee `0.061600109576901025 Ether ($96.56)`
 * Daily Transaction fees cost approximately `$600`
 * *Note: Infrastructure costs for running relayer, watchdog, etc are not included.*
+
+The following links provide the production Ethereum addresses and blockexplorer views for NearBridge.sol and the ERC20 Locker
+* [Ethereum Mainnet Bridge addresses and parameters](https://github.com/aurora-is-near/rainbow-bridge-client/tree/main/packages/client#ethereum-mainnet-bridge-addresses-and-parameters)
+* [NearBridge.sol on Ethereum Block Explorer](https://etherscan.io/address/0x3fefc5a4b1c02f21cbc8d3613643ba0635b9a873)
+    * [Sample `addLightClientBlock(bytes data)` function call](https://etherscan.io/tx/0xa0fbf1405747dbc1c1bda1227e46bc7c5feac36c0eeaab051022cfdb268e60cc/advanced)
+* [NEAR ERC20Locker on Ethereum Block Explorer](https://etherscan.io/address/0x23ddd3e3692d1861ed57ede224608875809e127f#code)
+
 
 #### Bonding and Slashing
 
@@ -677,6 +680,12 @@ Is the NEAR light client deployed on ethereum.
     * `mapping(uint64 => bytes32) blockHashes_;`
     * `mapping(uint64 => bytes32) blockMerkleRoots_;`
     * `mapping(address => uint256) public override balanceOf;`
+
+#### Key Points
+* NEAR has no forks
+* NEAR uses Ed25519 signatures
+* They wrote there own [Ed25519.sol](https://github.com/aurora-is-near/rainbow-bridge/blob/master/contracts/eth/nearbridge/contracts/Ed25519.sol)
+* Validating signatures is too expensive (waiting on [eip-665.md](https://github.com/ethereum/EIPs/blob/master/EIPS/eip-665.md)
 
 #### Further Information
 
@@ -766,6 +775,8 @@ Newer
             * [Targeting Shanghai upgrade May 2023](https://ethereum-magicians.org/t/eip-2537-bls12-precompile-discussion-thread/4187/16)
             * [Shanghai Core EIP Consideration](https://ethereum-magicians.org/t/shanghai-core-eip-consideration/10777/26)
         * [Signing Mechanisms](#appendix-e-signing-mechanisms)
+    * [NEAR Signatures Ed25519](https://github.com/ethereum/EIPs/blob/master/EIPS/eip-665.md)
+          * [Ed25519.sol developed by NEAR](https://github.com/aurora-is-near/rainbow-bridge/blob/master/contracts/eth/nearbridge/contracts/Ed25519.sol)
     * Ethereum Relayer Design Review
     * IsoMorph MultiChain Support
       * [CrossChain Chain Communication Protocols](#appendix-c-reference-cross-chain-communication-protocols)
