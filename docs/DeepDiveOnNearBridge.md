@@ -6,13 +6,12 @@
   - [John](#john)
   - [Consensus](#consensus)
     - [Proof Of Work](#proof-of-work)
-      - [Key Points](#key-points)
       - [Further Information](#further-information)
       - [Reference Implementations](#reference-implementations)
     - [Harmony Fast Byzantine Fault Tolerance (FBFT)](#harmony-fast-byzantine-fault-tolerance-fbft)
     - [Ethereum 2.0 Proof Of Stake](#ethereum-20-proof-of-stake)
       - [Ethereum 2.0 Attestations](#ethereum-20-attestations)
-      - [Key Points](#key-points-1)
+      - [Key Points](#key-points)
     - [NEAR Protocol Consensus](#near-protocol-consensus)
     - [Further Information](#further-information-1)
     - [Reference Implementatiosn](#reference-implementatiosn)
@@ -22,6 +21,7 @@
       - [Sample Implementation](#sample-implementation)
       - [Further Information](#further-information-2)
     - [Ethereum 1.0 Light Client (on Harmony)](#ethereum-10-light-client-on-harmony)
+      - [Key Points](#key-points-1)
     - [Ethereum 2.0](#ethereum-20)
       - [Key Concepts](#key-concepts)
       - [Altair Light Client -- Sync Protocol](#altair-light-client----sync-protocol)
@@ -96,15 +96,6 @@ func (ethash *Ethash) SealHash(header *types.Header) (hash common.Hash) {
 	return hash
 }
 ```
-
-#### Key Points
-* Uses EthHash Function which has been implemented in go, rust and solidity.
-* DAG Generation for an Epoch is done up front (see [DagProof.js](https://github.com/johnwhitton/horizon/blob/refactorV2/src/eth2hmy-relay/lib/DagProof.js)) takes a couple of hours (code can be optimized) generates a merkle tree uses about 2GB.
-* Forks are possible so finality takes longer
-  *  Harmony Horizon Bridge waited for 25 blocks to be verified (see [EthereumLightClient.sol isVerified](https://github.com/johnwhitton/horizon/blob/refactorV2/contracts/EthereumLightClient.sol#L248))
-        * `return canonicalBlocks[blockHash] && blocks[blockHash].number + 25 < blocks[canonicalHead].number;`
-   * Harmony Horizon Bridge waited for 200 blocks to be finalized (see [EthereumLightClient.sol isFinalized](https://github.com/johnwhitton/horizon/blob/refactorV2/contracts/EthereumLightClient.sol#L257) )
-       * `return canonicalBlocks[blockHash] && blocks[blockHash].number + 200 < blocks[canonicalHead].number;`
 
 
 #### Further Information
@@ -460,6 +451,17 @@ Existing Design
         * has a valid difficulty  
         * has a valid Proof of Work (POW)
     * Check if the canonical chain needs to be replaced by another fork
+
+#### Key Points
+* Uses EthHash Function which has been implemented in go, rust and solidity.
+* DAG Generation for an Epoch is done up front (see [DagProof.js](https://github.com/johnwhitton/horizon/blob/refactorV2/src/eth2hmy-relay/lib/DagProof.js)) takes a couple of hours (code can be optimized) generates a merkle tree uses about 2GB.
+* Forks are possible so finality takes longer
+  *  Harmony Horizon Bridge waited for 25 blocks to be verified (see [EthereumLightClient.sol isVerified](https://github.com/johnwhitton/horizon/blob/refactorV2/contracts/EthereumLightClient.sol#L248))
+        * `return canonicalBlocks[blockHash] && blocks[blockHash].number + 25 < blocks[canonicalHead].number;`
+   * Harmony Horizon Bridge waited for 200 blocks to be finalized (see [EthereumLightClient.sol isFinalized](https://github.com/johnwhitton/horizon/blob/refactorV2/contracts/EthereumLightClient.sol#L257) )
+       * `return canonicalBlocks[blockHash] && blocks[blockHash].number + 200 < blocks[canonicalHead].number;`
+
+
 ### Ethereum 2.0
 
 #### Key Concepts
