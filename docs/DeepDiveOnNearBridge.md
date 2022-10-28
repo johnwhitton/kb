@@ -52,6 +52,7 @@
   - [APPENDIX C: Reference Cross Chain Communication Protocols](#appendix-c-reference-cross-chain-communication-protocols)
   - [APPENDIX D: Other Bridge Approaches](#appendix-d-other-bridge-approaches)
   - [APPENDIX E: Signing Mechanisms](#appendix-e-signing-mechanisms)
+  - [APPENDIX F: Related Design Documents](#appendix-f-related-design-documents)
 - [References](#references)
 - [Reference Code Bases](#reference-code-bases)
   - [Core Protocol](#core-protocol)
@@ -613,6 +614,13 @@ type headerFields struct {
 ## Relayers
 
 ### NEAR TO Ethereum
+The [NEAR Rainbow bridge](https://near.org/bridge/) is in [this github repository](https://github.com/aurora-is-near/rainbow-bridge) and is supported by [Aurora-labs](https://github.com/aurora-is-near). 
+
+It recently provided support for ETH 2.0 in this [Pull Request (762)](https://github.com/aurora-is-near/rainbow-bridge/pull/762). 
+
+It interacts [lighthouse](https://github.com/aurora-is-near/lighthouse) for Ethereum 2.0 Consensus and tree_hash functions as well as bls signatures.
+
+High Level their architecture is similar to the Horizon Bridge but with some key differences.
 
 #### NEAR to Ethereum block propagation costing
 
@@ -804,6 +812,12 @@ Newer
 # APPENDICES
 
 ## APPENDIX A: Ethereum Light Client Specifications
+* [Beacon Chain Specification](https://github.com/ethereum/consensus-specs/blob/master/specs/phase0/beacon-chain.md)
+* [Extended light client protocol](https://notes.ethereum.org/@vbuterin/extended_light_client_protocol)
+* [Altair Light Client -- Light Client](https://github.com/ethereum/consensus-specs/blob/dev/specs/altair/light-client/light-client.md)
+* [Altair Light Client -- Sync Protocol](https://github.com/ethereum/consensus-specs/blob/dev/specs/altair/light-client/sync-protocol.md)
+* [Beacon Chain Fork Choice](https://github.com/ethereum/consensus-specs/blob/dev/specs/phase0/fork-choice.md)
+
 
 ## APPENDIX B: Threat Mitigation
 
@@ -904,6 +918,11 @@ According to Nomad’s post-mortem, an implementation bug in a June 21 smart con
     - [EIP-1108: Reduce alt_bn128 precompile gas costs](https://aztecprotocol.github.io/aztec-crypto-js/module-bn128.html)
     - [BN254](https://neuromancer.sk/std/bn/bn254)
     - [EIP-2494: Baby Jubjub Elliptic Curve an elliptic curve designed to work inside zk-SNARK circuits in Ethereum.](https://eips.ethereum.org/EIPS/eip-2494)
+
+## APPENDIX F: Related Design Documents
+* [HORIZON: Ethereum 1.0 Harmony Bridge](./HORIZON.md)
+* [ETH2_0.md: NEAR ETH 2.0 Bridge](./ETH2_0.md)
+* [DESIGN.md: Trustless Bridge Design Placeholder](./DESIGN.md)
 
 # References
 - [ETHEREUM DEVELOPMENT DOCUMENTATION](https://ethereum.org/en/developers/docs/)
