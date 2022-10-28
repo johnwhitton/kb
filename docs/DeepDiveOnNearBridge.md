@@ -293,7 +293,9 @@ From [Attestations, ethereum.org](https://ethereum.org/en/developers/docs/consen
 
 #### Key Points
 * Use of BLS Signatures
-* Validators typically change per epoch
+* Validators provide attestations per epoch
+* LMD GHOST Fork Rule choses the correct epoch
+* `aggregation_bits` provides a very concise way to know which validators have agreed with the block proposer
 
 ### NEAR Protocol Consensus
 
