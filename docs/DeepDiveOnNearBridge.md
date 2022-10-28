@@ -157,39 +157,6 @@ type headerFields struct {
 ```
 
 
-
-Block Structure from [harmony](https://github.com/peekpi/harmony/blob/mmrHardfork/block/v4/header.go) with [Merkle Mountain Range](https://docs.grin.mw/wiki/chain-state/merkle-mountain-range/) support [Mmr hardfork PR 4198](https://github.com/harmony-one/harmony/pull/4198) introduces `MMRoot`
-```
-type headerFields struct {
-	ParentHash          common.Hash    `json:"parentHash"       gencodec:"required"`
-	Coinbase            common.Address `json:"miner"            gencodec:"required"`
-	Root                common.Hash    `json:"stateRoot"        gencodec:"required"`
-	TxHash              common.Hash    `json:"transactionsRoot" gencodec:"required"`
-	ReceiptHash         common.Hash    `json:"receiptsRoot"     gencodec:"required"`
-	OutgoingReceiptHash common.Hash    `json:"outgoingReceiptsRoot"     gencodec:"required"`
-	IncomingReceiptHash common.Hash    `json:"incomingReceiptsRoot" gencodec:"required"`
-	Bloom               ethtypes.Bloom `json:"logsBloom"        gencodec:"required"`
-	Number              *big.Int       `json:"number"           gencodec:"required"`
-	GasLimit            uint64         `json:"gasLimit"         gencodec:"required"`
-	GasUsed             uint64         `json:"gasUsed"          gencodec:"required"`
-	Time                *big.Int       `json:"timestamp"        gencodec:"required"`
-	Extra               []byte         `json:"extraData"        gencodec:"required"`
-	MixDigest           common.Hash    `json:"mixHash"          gencodec:"required"`
-	// Additional Fields
-	ViewID              *big.Int    `json:"viewID"           gencodec:"required"`
-	Epoch               *big.Int    `json:"epoch"            gencodec:"required"`
-	ShardID             uint32      `json:"shardID"          gencodec:"required"`
-	LastCommitSignature [96]byte    `json:"lastCommitSignature"  gencodec:"required"`
-	LastCommitBitmap    []byte      `json:"lastCommitBitmap"     gencodec:"required"` // Contains which validator signed
-	Vrf                 []byte      `json:"vrf"`
-	Vdf                 []byte      `json:"vdf"`
-	ShardState          []byte      `json:"shardState"`
-	CrossLinks          []byte      `json:"crossLink"`
-	Slashes             []byte      `json:"slashes"`
-	MMRRoot             common.Hash `json:"mmrRoot"`
-}
-```
-
 ### Ethereum 2.0 Proof Of Stake
 
 *Note: Time on Ethereum 2.0 Proof of Stake is divided into slots and epochs. One slot is 12 seconds. One epoch is 6.4 minutes, consisting of 32 slots. One block can be created for each slot.*
@@ -364,6 +331,64 @@ https://github.com/near/nearcore
 
 ### Harmony
 Harmony [MMR PR Review](https://github.com/harmony-one/harmony/pull/3872) and [latest PR](https://github.com/harmony-one/harmony/pull/4198/files) uses Merkle Mountain Ranges to facilitate light client development against Harmony's sharded Proof of Stake Chain.
+
+Block Structure from [harmony](https://github.com/peekpi/harmony/blob/mmrHardfork/block/v4/header.go) with [Merkle Mountain Range](https://docs.grin.mw/wiki/chain-state/merkle-mountain-range/) support [Mmr hardfork](https://github.com/harmony-one/harmony/pull/3872) [PR 4198](https://github.com/harmony-one/harmony/pull/4198) introduces `MMRoot`
+
+GOAL: Allow verificatin that previous blocks were valid based on the MMRRoot Passed.
+
+Features
+* add receipt proof
+* adding MMRRoot field to block header & cross-chain epoch
+* add memdb and filedb mmr processing logic
+* add GetProof rpc
+* relayer rpcs for fetching full header
+* adding block signers for rpc response, debug-only
+* minor testing bls
+* fix merge conflicts
+* github.com/zmitton/go-merklemountainrange dependency
+* minor fix
+* moving mmr root compute/update logic to after the shard state is computed
+* fix getting siblings bug
+* adding index to mmr-proof and GetProof with respect to a block number
+* check if mmr directory exists, if not create it first
+* fixing failing test
+* fixing config build test failure
+* fixing more test failures
+* cleanup
+* turn of signers
+* fix header copy issue and write mmr root directly to node.worker header
+* fix nil pointer problems, shard state fetch issue, and refIndex bug
+* clean up
+```
+type headerFields struct {
+	ParentHash          common.Hash    `json:"parentHash"       gencodec:"required"`
+	Coinbase            common.Address `json:"miner"            gencodec:"required"`
+	Root                common.Hash    `json:"stateRoot"        gencodec:"required"`
+	TxHash              common.Hash    `json:"transactionsRoot" gencodec:"required"`
+	ReceiptHash         common.Hash    `json:"receiptsRoot"     gencodec:"required"`
+	OutgoingReceiptHash common.Hash    `json:"outgoingReceiptsRoot"     gencodec:"required"`
+	IncomingReceiptHash common.Hash    `json:"incomingReceiptsRoot" gencodec:"required"`
+	Bloom               ethtypes.Bloom `json:"logsBloom"        gencodec:"required"`
+	Number              *big.Int       `json:"number"           gencodec:"required"`
+	GasLimit            uint64         `json:"gasLimit"         gencodec:"required"`
+	GasUsed             uint64         `json:"gasUsed"          gencodec:"required"`
+	Time                *big.Int       `json:"timestamp"        gencodec:"required"`
+	Extra               []byte         `json:"extraData"        gencodec:"required"`
+	MixDigest           common.Hash    `json:"mixHash"          gencodec:"required"`
+	// Additional Fields
+	ViewID              *big.Int    `json:"viewID"           gencodec:"required"`
+	Epoch               *big.Int    `json:"epoch"            gencodec:"required"`
+	ShardID             uint32      `json:"shardID"          gencodec:"required"`
+	LastCommitSignature [96]byte    `json:"lastCommitSignature"  gencodec:"required"`
+	LastCommitBitmap    []byte      `json:"lastCommitBitmap"     gencodec:"required"` // Contains which validator signed
+	Vrf                 []byte      `json:"vrf"`
+	Vdf                 []byte      `json:"vdf"`
+	ShardState          []byte      `json:"shardState"`
+	CrossLinks          []byte      `json:"crossLink"`
+	Slashes             []byte      `json:"slashes"`
+	MMRRoot             common.Hash `json:"mmrRoot"`
+}
+```
 
 #### Key Light Client Components Include
 * [TokenLockerOnEthereum.sol](https://github.com/johnwhitton/horizon/blob/refactorV2/contracts/TokenLockerOnEthereum.sol) which has the following imports
