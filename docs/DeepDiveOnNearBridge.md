@@ -1,26 +1,28 @@
 # Deep Dive On Near Bridge
 
-## Table of Contents
+**Table of Contents2**
 
 - [Deep Dive On Near Bridge](#deep-dive-on-near-bridge)
-  - [Table of Contents](#table-of-contents)
   - [John](#john)
   - [Consensus](#consensus)
     - [Proof Of Work](#proof-of-work)
-    - [Proof of Stake](#proof-of-stake)
-      - [Harmony Fast Byzantine Fault Tolerance (FBFT)](#harmony-fast-byzantine-fault-tolerance-fbft)
-      - [Ethereum 2.0 Proof Of Stake](#ethereum-20-proof-of-stake)
+    - [Harmony Fast Byzantine Fault Tolerance (FBFT)](#harmony-fast-byzantine-fault-tolerance-fbft)
+    - [Ethereum 2.0 Proof Of Stake](#ethereum-20-proof-of-stake)
       - [Ethereum 2.0 Attestations](#ethereum-20-attestations)
+    - [NEAR Protocol Consensus](#near-protocol-consensus)
+    - [Further Information**](#further-information)
+    - [Reference Implementatiosn](#reference-implementatiosn)
   - [Light Client Support](#light-client-support)
     - [Harmony](#harmony)
       - [Key Light Client Components Include](#key-light-client-components-include)
       - [Sample Implementation](#sample-implementation)
+      - [Further Information**](#further-information-1)
     - [Ethereum 2.0](#ethereum-20)
       - [Key Concepts](#key-concepts)
       - [Altair Light Client -- Sync Protocol](#altair-light-client----sync-protocol)
       - [The Portal Network](#the-portal-network)
       - [Transaction Proofs](#transaction-proofs)
-      - [References](#references)
+      - [Further Information](#further-information-2)
     - [NEAR](#near)
   - [Relayers](#relayers)
     - [NEAR TO Ethereum](#near-to-ethereum)
@@ -28,11 +30,12 @@
       - [Bonding and Slashing](#bonding-and-slashing)
       - [NEAR to Ethereum block propagation flow](#near-to-ethereum-block-propagation-flow)
       - [NearBridge.sol](#nearbridgesol)
+      - [Further Information](#further-information-3)
     - [Ethereum to NEAR](#ethereum-to-near)
       - [Light Client Every Block Header (Ethereum to NEAR)](#light-client-every-block-header-ethereum-to-near)
     - [Harmony to Ethereum](#harmony-to-ethereum)
     - [Ethereum to Harmony](#ethereum-to-harmony)
-  - [Watchdog/Fisherman/Verifiers](#watchdogfishermanverifiers)
+  - [Watchdogs](#watchdogs)
     - [NEAR to Ethereum watchdog](#near-to-ethereum-watchdog)
   - [Message Formatting and Serialization](#message-formatting-and-serialization)
   - [Next Steps](#next-steps)
@@ -42,7 +45,7 @@
   - [APPENDIX C: Reference Cross Chain Communication Protocols](#appendix-c-reference-cross-chain-communication-protocols)
   - [APPENDIX D: Other Bridge Approaches](#appendix-d-other-bridge-approaches)
   - [APPENDIX E: Signing Mechanisms](#appendix-e-signing-mechanisms)
-- [References](#references-1)
+- [References](#references)
 
 
 ## John
@@ -94,8 +97,9 @@ func (ethash *Ethash) SealHash(header *types.Header) (hash common.Hash) {
 * DAG Generation for an Epoch is done up front (see [DagProof.js](https://github.com/johnwhitton/horizon/blob/refactorV2/src/eth2hmy-relay/lib/DagProof.js)) takes a couple of hours (code can be optimized) generates a merkle tree uses about 2GB.
 * Forks are possible so finality takes longer
   *  Harmony Horizon Bridge waited for 25 blocks to be verified (see [EthereumLightClient.sol isVerified](https://github.com/johnwhitton/horizon/blob/refactorV2/contracts/EthereumLightClient.sol#L248))
-     * `return canonicalBlocks[blockHash] && blocks[blockHash].number + 25 < blocks[canonicalHead].number;`
+        * `return canonicalBlocks[blockHash] && blocks[blockHash].number + 25 < blocks[canonicalHead].number;`
    * Harmony Horizon Bridge waited for 200 blocks to be finalized (see [EthereumLightClient.sol isFinalized](https://github.com/johnwhitton/horizon/blob/refactorV2/contracts/EthereumLightClient.sol#L257) )
+       * `return canonicalBlocks[blockHash] && blocks[blockHash].number + 200 < blocks[canonicalHead].number;`
 
 
 **Further Information**
@@ -109,18 +113,17 @@ func (ethash *Ethash) SealHash(header *types.Header) (hash common.Hash) {
 * [ethash.sol, horizon 2022](https://github.com/johnwhitton/horizon/blob/refactorV2/contracts/ethash/ethash.sol)
 * [ethash.rs, parity-ethereum, 2020](https://github.com/openethereum/parity-ethereum/blob/v2.7.2-stable/ethash/src/lib.rs)
 * [progpow.ps, parity-ethereum, 2020](https://github.com/openethereum/parity-ethereum/blob/v2.7.2-stable/ethash/src/progpow.rs)
-* 
-* [DagProof.js, Harmony 2022](https://github.com/johnwhitton/horizon/blob/refactorV2/src/eth2hmy-relay/lib/DagProof.js))
-* [Horizon Smart Contracts](https://github.com/johnwhitton/horizon/blob/refactorV2/docs/inheritance-graph.png)
-![Horizon Smart Contracts](./assets/horizon-inheritance-graph.png "Horizon Smart Contracts")
 
-### Proof of Stake
 
-#### Harmony Fast Byzantine Fault Tolerance (FBFT)
+### Harmony Fast Byzantine Fault Tolerance (FBFT)
 
+The following is an excerpt from [Consensus](https://docs.harmony.one/home/general/technology/consensus)
 > The consensus algorithm is a key component of any blockchain. It determines the security and performance of a blockchain and is often referred to as the "engine" of a blockchain. Harmony’s consensus algorithm is called Fast Byzantine Fault Tolerance (FBFT), which is an innovative upgrade on the famous PBFT algorithm. FBFT is one order of magnitude faster and more scalable than PBFT because BLS (Boneh–Lynn–Shacham) aggregate signature is used to significantly reduce the communication cost. Specifically, FBFT allows at least 250 validators to reach consensus within 2 seconds.
 > 
 > For every round of consensus in FBFT, one validator serves as the “leader” and there are three phases: the announce phase, the prepare phase and the commit phase. In the announce phase, the leader proposes a new block and broadcasts the block hash to all of the validators. In the prepare phase, validators verify the message and sign on the block hash, as well as sending the signature back to the leader. The prepare phase finishes when signatures with more than 2/3 of the voting power are collected. After that, the leader aggregated the collected signatures into a O(1)-sized BLS aggregate signature and then broadcast it with the whole block to start the commit phase. The commit phase involves validators verifying the block and doing a similar signing process as the prepare phase (i.e. 2/3 voting power collection). The consensus is reached after the commit phase is done. This whole process can be done within 2 seconds in mainnet.
+
+The following is an excerpt from [Epoch Transition](https://docs.harmony.one/home/network/validators/definitions/epoch-transition)
+> An epoch is a period of time when the beacon shard (i.e. shard 0, the coordinator for other shards) produces a fixed number of blocks. In Harmony mainnet, an epoch is 32768 blocks (~18.2h with a 2s block time) in the beacon shard
 
 *Note: If the leader fails to produce a block within a certain time frame, then a new leader is elected*
 
@@ -191,7 +194,9 @@ type headerFields struct {
 }
 ```
 
-#### Ethereum 2.0 Proof Of Stake
+### Ethereum 2.0 Proof Of Stake
+
+*Note: Time on Ethereum 2.0 Proof of Stake is divided into slots and epochs. One slot is 12 seconds. One epoch is 6.4 minutes, consisting of 32 slots. One block can be created for each slot.*
 
 From [Proof of Stake, ethereum.org](https://ethereum.org/en/developers/docs/consensus-mechanisms/pos/)
 > Proof-of-stake underlies certain consensus mechanisms used by blockchains to achieve distributed consensus. In proof-of-work, miners prove they have capital at risk by expending energy. Ethereum uses proof-of-stake, where validators explicitly stake capital in the form of ETH into a smart contract on Ethereum. This staked ETH then acts as collateral that can be destroyed if the validator behaves dishonestly or lazily. The validator is then responsible for checking that new blocks propagated over the network are valid and occasionally creating and propagating new blocks themselves.
@@ -326,19 +331,21 @@ From [Attestations, ethereum.org](https://ethereum.org/en/developers/docs/consen
 **Key Points**
 * Use of BLS Signatures
 * Validators typically change per epoch
-* Mountain Merkle Ranges allow proof of all blocks up until the block synched
 
+### NEAR Protocol Consensus
 
-**Further Information**
+Please see [Consensus, NEAR Nomicon](https://nomicon.io/ChainSpec/Consensus)
+
+### Further Information**
 * [Proof of Stake (POS), Ethereum Org, 2022](https://ethereum.org/en/developers/docs/consensus-mechanisms/pos/)
 * [Proof of Stake, Vitalik, 2017](https://vitalik.ca/general/2017/12/31/pos_faq.html)
 * [Combining GHOST and Casper](https://arxiv.org/pdf/2003.03052.pdf)
 * [Consensus, Harmony, 2022](https://docs.harmony.one/home/general/technology/consensus)
 * [Consensus, NEAR Nomicon](https://nomicon.io/ChainSpec/Consensus)
-* [Merkle Mountain Ranges (MMR), Grin Documentation, 2022](https://docs.grin.mw/wiki/chain-state/merkle-mountain-range/)
 
 
-**Reference Implementation**
+
+### Reference Implementatiosn
 * [consensus, Harmony](https://github.com/harmony-one/harmony/tree/main/consensus)
 * [Mountain Merkle Range Support, Harmony](https://github.com/harmony-one/harmony/pull/4198)
 * [Ethereum 2.0, Prysm](https://github.com/prysmaticlabs/prysm)
@@ -380,6 +387,7 @@ Harmony [MMR PR Review](https://github.com/harmony-one/harmony/pull/3872) and [l
     * [TokenLocker.sol](https://github.com/johnwhitton/horizon/blob/refactorV2/contracts/TokenLocker.sol): whose main function is to execute corresponding transactions based on transactions that occured on the other side of the bridge
         * `function execute(bytes memory rlpdata) internal returns (uint256 events)`
 
+
 #### Sample Implementation
 
 * gets the proof of the transaction on Harmony via `getProof` calling `prover.ReceiptProof` which calls the eprover and returns `proof` with 
@@ -409,6 +417,14 @@ Harmony [MMR PR Review](https://github.com/harmony-one/harmony/pull/3872) and [l
             * `TxMapped[tokenReq] = tokenAck;`
             * `TxMappedInv[tokenAck] = IERC20Upgradeable(tokenReq);`
             * `TxTokens.push(IERC20Upgradeable(tokenReq));`
+
+#### Further Information**
+
+* [DagProof.js, Harmony 2022](https://github.com/johnwhitton/horizon/blob/refactorV2/src/eth2hmy-relay/lib/DagProof.js))
+* [Horizon Smart Contracts](https://github.com/johnwhitton/horizon/blob/refactorV2/docs/inheritance-graph.png)
+![Horizon Smart Contracts](./assets/horizon-inheritance-graph.png "Horizon Smart Contracts")
+* [Merkle Mountain Ranges (MMR), Grin Documentation, 2022](https://docs.grin.mw/wiki/chain-state/merkle-mountain-range/)
+
 
 ### Ethereum 2.0
 
@@ -489,7 +505,8 @@ Harmony [MMR PR Review](https://github.com/harmony-one/harmony/pull/3872) and [l
     
 * TODO: Review of Retrieving a transaction proof not just retrieving data on-demand
 
-#### References
+#### Further Information
+* [Ethereum 2.0 Light Client Support](./ETH2_0.md#ethereum-20-light-client-support)
 * Ethereum 2.0 Specifications
     * [Beacon Chain Specification](https://github.com/ethereum/consensus-specs/blob/master/specs/phase0/beacon-chain.md)
     * [Extended light client protocol](https://notes.ethereum.org/@vbuterin/extended_light_client_protocol)
@@ -520,9 +537,6 @@ Here we cover two approaches which may be combined
 > A standalone light client would bootstrap by requesting next blocks until it receives an empty result, and then periodically request the next light client block.
 >
 > A smart contract-based light client that enables a bridge to NEAR on a different blockchain naturally cannot request blocks itself. Instead external oracles query the next light client block from one of the full nodes, and submit it to the light client smart contract. The smart contract-based light client performs the same checks described above, so the oracle doesn't need to be trusted.
-
-
-
 
 
 ## Relayers
@@ -600,6 +614,11 @@ Is the NEAR light client deployed on ethereum.
     * `mapping(uint64 => bytes32) blockMerkleRoots_;`
     * `mapping(address => uint256) public override balanceOf;`
 
+#### Further Information
+
+* [Near Rainbow Bridge Near Light Client Walkthrough](https://github.com/johnwhitton/kb/blob/main/docs/ETH2_0.md#near-rainbow-bridge-near-light-client-walkthrough)
+
+
 ### Ethereum to NEAR
 
 *Note: Current Review Implies that all block headers are propagated from Ethereum and stored on NEAR for 7 days. This needs further review as it is thought that an approach similar to NEAR to Ethreum with the Latest Beacon Block from Ethereum allowing all previous blocks to be proved could be utilized.* 
@@ -625,6 +644,10 @@ At a high level the ethereum light client contract
 * Stores current_sync_committee
 * Stores next_sync_committee
 
+**Further Information**
+* [Near Rainbow Bridge Ethereum Light Client Walkthrough](./ETH2_0.md#near-rainbow-bridge-ethereum-light-client-walkthrough)
+
+
 ### Harmony to Ethereum
 Relay mechanism is still to be developed. Design would be similar to NEAR to Ethereum.
 
@@ -632,7 +655,7 @@ Relay mechanism is still to be developed. Design would be similar to NEAR to Eth
 Relay Mechanism was designed for Ethereum 1.0 and needs to be updated for Ethereum 2.0
 
 
-## Watchdog/Fisherman/Verifiers
+## Watchdogs
 
 ### NEAR to Ethereum watchdog
 The [watchdog](https://github.com/aurora-is-near/rainbow-bridge/blob/master/near2eth/watchdog/index.js) runs every 10 seconds and validates blocks on `NearBridge.sol` challenging blocks with incorrect signatures. *Note: It uses [heep-prometheus](https://github.com/aurora-is-near/rainbow-bridge/blob/master/utils/http-prometheus.js) for monitoring and storing block and producer information using `gauges` and `counters`.*
@@ -671,19 +694,26 @@ Newer
 
 
 ## Next Steps
-* [Isomorph Design]
-    * [BLS Signature Validation]()
-    * [Ethereum Relayer Design Review]
-    * [CrossChain Chain Communication Protocols]
-    * [Other Bridge Approaches]
-    * [Threat Vector Review]
-* [IsoMorph Harmony ETH 2.0]
+* Isomorph Design
+    * [BLS Signature Validation](https://en.wikipedia.org/wiki/BLS_digital_signature): Boneh–Lynn–Shacham
+        * [BLS Signatures in Solidity](https://hackmd.io/@liangcc/bls-solidity)
+        * [BLS12-381 For The Rest Of Us](https://hackmd.io/@benjaminion/bls12-381)
+        * [EIP-2537: Precompile for BLS12-381 curve operations](https://eips.ethereum.org/EIPS/eip-2537)
+            * [Targeting Shanghai upgrade May 2023](https://ethereum-magicians.org/t/eip-2537-bls12-precompile-discussion-thread/4187/16)
+            * [Shanghai Core EIP Consideration](https://ethereum-magicians.org/t/shanghai-core-eip-consideration/10777/26)
+        * [Signing Mechanisms](#appendix-e-signing-mechanisms)
+    * Ethereum Relayer Design Review
+    * IsoMorph MultiChain Support
+      * [CrossChain Chain Communication Protocols](#appendix-c-reference-cross-chain-communication-protocols)
+      * [Other Bridge Approaches](#appendix-d-other-bridge-approaches)
+      * [Threat Vector Review](#appendix-b-threat-mitigation)
+    * IsoMorph Zero Knowledge Improvements
+* IsoMorph Harmony ETH 2.0
     * ETH 2.0 Support
     * Relayer Harmony to ETH
     * Watchdog
-* [IsoMorph MultiChain Support]
-* [IsoMorph Zero Knowledge Improvements]
-    * 
+
+
 
 
 # APPENDICES
