@@ -208,7 +208,7 @@ The oracle works by generating and verifying Merkle Patricia proofs of the follo
    2. [Token BridgeL ETH-xDai Arbitrary Message Bridge](https://docs.tokenbridge.net/eth-xdai-amb-bridge/about-the-eth-xdai-amb): An Arbitrary Message Bridge (AMB) between the Ethereum Mainnet and the xDai chain
 2. [eth-proof-of-consensus: bridge](https://github.com/succinctlabs/eth-proof-of-consensus/tree/main/contracts/src/bridge)
 
-3. [BeaconLightClient on Gnosis Chain](https://blockscout.com/xdai/mainnet/address/0xa3ae36abaD813241b75b3Bb0e9E7a37aeFD70807): Transactions every 50 blocks on Gnosis i.e. approximately every 3 minutes
+
 
 ### Additional Contracts
 
@@ -229,3 +229,7 @@ The oracle works by generating and verifying Merkle Patricia proofs of the follo
 
 Additional Information can be found in [DeepDiveOnNearBridge: Relayers](./DeepDiveOnNearBridge.md#relayers)
 
+
+1. [BeaconLightClient on Gnosis Chain](https://blockscout.com/xdai/mainnet/address/0xa3ae36abaD813241b75b3Bb0e9E7a37aeFD70807): Transactions every 50 blocks on Gnosis i.e. approximately every 3 minutes
+2. [Succint Blog Oct 29, 2022](https://blog.succinct.xyz/post/2022/10/29/gnosis-bridge/): Proof of Consensus Bridging between Ethereum and Gnosis Chain
+> On Gnosis Chain, after the Ethereum block in which the deposit transaction was included is finalized (generally 2 epochs, ~12 minutes) and the light client has been updated with a block of height greater than or equal to this block, our relayer automatically submits an executeMessage transaction to the Gnosis AMB. 
