@@ -170,7 +170,7 @@ include "./sha256_bytes.circom";
 
 ## Contracts
 
-Built using [foundry](https://book.getfoundry.sh/)([github](https://github.com/foundry-rs/foundry)) and [forge](https://book.getfoundry.sh/forge/).Verifiers ([Light Client Contracts](#light-client-contracts)) can be [generated](https://docs.circom.io/getting-started/proving-circuits/#verifying-from-a-smart-contract) from [circuits](#circuits) using [snarkjs](https://www.npmjs.com/package/snarkjs)
+Built using [foundry](https://book.getfoundry.sh/)([github](https://github.com/foundry-rs/foundry)) and [forge](https://book.getfoundry.sh/forge/).  Verifiers ([Light Client Contracts](#light-client-contracts)) can be [generated](https://docs.circom.io/getting-started/proving-circuits/#verifying-from-a-smart-contract) from [circuits](#circuits) using [snarkjs](https://www.npmjs.com/package/snarkjs)
 
 ### Library Contracts
 
