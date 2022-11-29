@@ -36,32 +36,42 @@ This is an on-going list of development and research ideas.
 ## Cross-Chain Consensus Proofs
 
 Old - Light Clients and Merkle Trees disparate consenus proving approaches
+
 New - ZK Proofs 
+
 Benchmarks 
 
 ## Cross-chain messaging
 
 Old - Siloed Solutions Cosmos IBC, Polkadot XCMP
+
 New - Standard Message Framework with Chain Specific Adapters
+
 BenchMarks
 
 ## ZK Proofs
 
 Old - Siloed proving of e.g. Block validity via signatures
+
 New - Hub and spoke model. Prove once and verify on multiple chains
+
 BenchMarks
 
 ## Message Relays
 
 Old - Provers, Relayers, Schedulers (Keeper Network, Off Chain Workers)
+
 New - Event Based Multi Chain Network
+
 Benchmarks
 
 
 ## Bridged Transaction Processing
 
 Old - Transaction Processors, Token Lockers, Execution Layer, Consensus Layer Contracts
-New - 
+
+New -
+ 
 Benchmarks - 
 
 
