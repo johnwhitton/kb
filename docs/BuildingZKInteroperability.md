@@ -26,6 +26,13 @@ This is an on-going list of development and research ideas.
 
 ## Asset Portability
 
+Scenario - Storing Assets on High Cost, Highly Secure chain such as Ethereum and allowing them to be leveraged in low cost, high speed chains such as Polygon
+
+Benchmarks
+* Gas Fees Per Chain
+* Transaction Volume Per Chain
+* TPS
+
 ## High Speed Low Cost Gaming Frameworks
 
 ## Cheaper Data Storage
@@ -71,7 +78,7 @@ Benchmarks
 Old - Transaction Processors, Token Lockers, Execution Layer, Consensus Layer Contracts
 
 New -
- 
+
 Benchmarks - 
 
 
